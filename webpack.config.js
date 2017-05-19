@@ -1,6 +1,7 @@
 var path = require('path');
 var fs = require('fs');
 
+// find and return the list of native node modules
 var nodeModules = {};
 fs.readdirSync('node_modules')
   .filter(function (x) {
@@ -13,12 +14,22 @@ fs.readdirSync('node_modules')
 module.exports = {
   target: 'node',
   entry: [
-    './src/main2.ts'
+    './src/main.ts'
   ],
   output: {
-    filename: '/bundle.js',
-    path: './dist'
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, 'dist')
   },
+  node: {
+    //real dirname relative to the context option
+    __dirname: true,
+    // real filename relative to the context option
+    __filename: true
+
+  },
+  //devtool Choose a developer tool to enhance debugging.
+  devtool: 'source-map',
+
   externals: nodeModules,
   module: {
     rules: [{
