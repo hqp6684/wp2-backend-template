@@ -1,4 +1,4 @@
-import { server } from './express-server';
+import { App } from './express/server';
 
-server.listen(8080);
-
+const app = new App();
+app.express.listen(8080);
