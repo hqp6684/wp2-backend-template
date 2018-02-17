@@ -2,7 +2,9 @@
   "compilerOptions": {
     "outDir": "./dist/",
     "target": "es5",
-    "lib": ["es2015"],
+    "lib": [
+      "es2015"
+    ],
     "module": "commonjs",
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -13,6 +15,12 @@
     "sourceMap": true,
     "inlineSources": true,
     "allowJs": true,
-    "typeRoots": ["./node_modules/@types"]
-  }
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ]
 }

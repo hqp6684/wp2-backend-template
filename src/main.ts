@@ -1,4 +1,4 @@
-import { App } from './express/server';
 
-const app = new App();
-app.express.listen(8080);
+function test() {
+  console.log('helo');
+}
