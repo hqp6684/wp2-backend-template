@@ -17,6 +17,7 @@ if (window.hasOwnProperty('Worker')) {
         displayLatest(e.data[1]);
         break;
       case 'oldest':
+
         break;
     }
   };
@@ -28,4 +29,13 @@ if (window.hasOwnProperty('Worker')) {
 
 function displayLatest(items: Array<ListItem>) {
   console.log(items);
+  let table = document.getElementById('latest') as HTMLTableElement;
+  table.innerHTML = '';
+  table.insertRow(0).insertCell(0).innerHTML = '<b>Latest</b>';
+  items.forEach((item, index) => {
+
+    let row = table.insertRow(index + 1);
+    let cell = row.insertCell(0);
+    cell.innerText = item.pair.value.toString();
+  })
 }
