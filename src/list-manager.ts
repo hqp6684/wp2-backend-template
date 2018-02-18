@@ -52,11 +52,12 @@ function updateLatest20() {
   // clean up toBeRemovedL
   toBeRemovedL.forEach(ri => {
     if (ri) {
-      console.log(ri);
       let lIndex = L.indexOf(ri);
       removeItemFromL(lIndex);
     }
   });
+  //   empty the array
+  toBeRemovedL.splice(0);
 
   // Since addNewPair pushes new item to the end of the array
   // 20 latest items are from the left of the pointer
@@ -66,11 +67,12 @@ function updateLatest20() {
     let index = ((LPointer - i) + LLength) % LLength;
     let item = L[index];
     // if not null
-    item ? result.push(item) : result = result;
-    if (item.inUse) {
-      throw new Error('Error at clean up toBeRemovedL');
+    if (item) {
+      // tslint:disable-next-line:no-unused-expression
+      item.timeUp ? toBeRemovedL.push(item) : false;
+      result.push(item);
+      item.inUse = true;
     }
-    item.inUse = true;
   }
 
   _listWorker.postMessage(['latest', result]);
@@ -97,6 +99,9 @@ function updateOldest10() {
  */
 function addNumberPairToL(pair: NumberPair) {
   console.log('Adding new pair', pair);
+
+  //   convert 1-100 to seconds
+  pair.second = pair.second * 1000;
   // First case after initialization
   if (LPointer === -1) {
     let newItem: ListItem = {inUse: false, pair: pair, timeUp: false};
@@ -182,5 +187,7 @@ function addNumberPairToL(pair: NumberPair) {
 function removeItemFromL(index: number) {
   console.log('Removing pair at index ', index);
   L.splice(index, 1);
-  LPointer--;
+  //  removing item on the right side of the LPointer does not affect the
+  //  current value of LPOinter
+  index > LPointer ? LPointer = LPointer : LPointer--;
 }
