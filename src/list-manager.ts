@@ -21,6 +21,7 @@ const toBeRemovedL = new Array<ListItem>();
 // 5 seconds
 const lUpdateInterval = 5000;
 let LPointer = -1;
+let lIsFull = false;
 
 
 onmessage = function(e: MessageEvent) {
@@ -82,17 +83,22 @@ function updateLatest20() {
 
 function updateOldest10() {
   let result: Array<ListItem> = [];
-  // Since addNewPair pushes new item to the end of the array
-  // 10 oldest items are from the right of the pointer
-  for (let i = 0; i < 10; i++) {
-    let index = ((LPointer + i) + LLength) % LLength;
-    let item = L[index];
-    result.push(item);
+  // if L has been filled one, oldest items are from the the right of LPointer
+  if (lIsFull) {
+    for (let i = 0; i < 10; i++) {
+      let index = ((LPointer + i) + LLength) % LLength;
+      let item = L[index];
+      result.push(item);
+    }
+  } else {
+    // the first 10 items
+    for (let i = 0; i < 10; i++) {
+      let item = L[i];
+      result.push(item);
+    }
+    _listWorker.postMessage(['oldest', result]);
   }
-  _listWorker.postMessage(['oldest', result]);
 }
-
-
 /**
  * Triggered after received a new pair
  * @param pair from number-generator worker
@@ -116,7 +122,7 @@ function addNumberPairToL(pair: NumberPair) {
     updateL();
     return;
   }
-  //   Get to-be-removed item
+
   let loop = true;
   while (loop) {
     let toBeRemovedItem = L[LPointer];
@@ -133,6 +139,9 @@ function addNumberPairToL(pair: NumberPair) {
 
     // Case where pointer is at the end of L
     if (LPointer === LLength - 1) {
+      // L has been filled one
+      lIsFull = true;
+
       if (toBeRemovedItem.inUse) {
         toBeRemovedL.indexOf(toBeRemovedItem) > -1 ?
             toBeRemovedL.push(toBeRemovedItem) :
