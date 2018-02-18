@@ -1,20 +1,25 @@
 {
-  "name": "wp2",
+  "name": "web-worker",
   "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --config webpack.config.js",
-    "clean": "npm cache clear && rimraf -- dist"
+    "start": "tsc && concurrently \"tsc -w\" \"lite-server\" ",
+    "html": "find ./src -name '*.html' -type f -exec cp --parents {} ./dist \\;",
+    "build": "npm run clean && tsc && npm run html",
+    "wp-build": "webpack --config webpack.config.js",
+    "clean": "rimraf -- dist",
+    "serve": "lite-server"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.14.1"
+    "rxjs": "^5.5.6"
   },
   "devDependencies": {
+    "concurrently": "^3.5.1",
     "lite-server": "^2.3.0",
     "rimraf": "^2.6.2",
     "ts-loader": "^3.1.1",
