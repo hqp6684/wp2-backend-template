@@ -6,16 +6,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    <script src="main.js"></script>
 </head>
 
 
 <body>
-    <table id="latest">
-    </table>
-    <table id="oldest"></table>
+    <div style="width: 45%; float:left;">
+        <table id="latest">
+        </table>
+    </div>
+    <div style="width: 45%; float:right">
+
+        <table id="oldest" style="display: float;">
+            <thead>
+                <th>
+                    <td>
+                        <button id="sumButton">Display Sum</button>
+                    </td>
+                    <td>
+                        <button id="medianButton">Display Median</button>
+                    </td>
+                </th>
+            </thead>
+            <tbody id="oldestBody">
+
+            </tbody>
+        </table>
+    </div>
 
 
+    <script src="main.js"></script>
 </body>
 
 </html>
