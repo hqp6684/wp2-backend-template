@@ -28,8 +28,8 @@ if (window.hasOwnProperty('Worker')) {
   oldItemsManager.onmessage = (e: MessageEvent) => {
     switch (e.data[0]) {
       case 'median':
+        displayMedian(e.data[1]);
         break;
-
       case 'sum':
         displaySum(e.data[1]);
         break;
@@ -41,6 +41,11 @@ if (window.hasOwnProperty('Worker')) {
   let sumButton = document.getElementById('sumButton') as HTMLElement;
   sumButton.addEventListener('click', () => {
     listManager.postMessage(['oldest']);
+  });
+  // Register display median button
+  let medianButton = document.getElementById('medianButton') as HTMLElement;
+  medianButton.addEventListener('click', () => {
+    oldItemsManager.postMessage(['median']);
   });
 
 
@@ -63,9 +68,16 @@ function displayLatest(items: Array<ListItem>) {
 
 
 function displaySum(sum: number) {
-  let tbody = document.getElementById('table2') as HTMLTableElement;
+  let tbody = document.getElementById('sum') as HTMLTableElement;
   let row = tbody.insertRow(0);
   let cell = row.insertCell();
   cell.innerHTML = sum.toString();
-  console.log(tbody);
+}
+function displayMedian(median: number) {
+  let tbody = document.getElementById('median') as HTMLTableElement;
+  // reset row
+  tbody.innerHTML = '';
+  let row = tbody.insertRow(0);
+  let cell = row.insertCell();
+  cell.innerHTML = median.toString();
 }
