@@ -38,7 +38,9 @@ onmessage = function(e: MessageEvent) {
 
 
 
-// Triggered after the first item is pushed into L
+/**
+ * Update L every 5 seconds.
+ */
 function updateL() {
   setInterval(() => {
     updateLatest20();
@@ -58,7 +60,6 @@ function updateLatest20() {
     }
   });
   toBeRemovedL.splice(0);
-  // console.log('TobeRemovedL', toBeRemovedL);
   // Since addNewPair pushes new item to the end of the array
   // 20 latest items are from the left of the pointer
   // i = 1 because pointer is pointing at the to-be-replaced (the next latest)
