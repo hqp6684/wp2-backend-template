@@ -34,7 +34,6 @@ onmessage = function(e: MessageEvent) {
       updateOldest10();
       break;
   }
-
 };
 
 
@@ -54,28 +53,39 @@ function updateLatest20() {
   toBeRemovedL.forEach(ri => {
     if (ri) {
       let lIndex = L.indexOf(ri);
+      console.log('remove pair from list');
       removeItemFromL(lIndex);
     }
   });
-  //   empty the array
   toBeRemovedL.splice(0);
-
+  // console.log('TobeRemovedL', toBeRemovedL);
   // Since addNewPair pushes new item to the end of the array
   // 20 latest items are from the left of the pointer
   // i = 1 because pointer is pointing at the to-be-replaced (the next latest)
   let result: Array<ListItem> = [];
-  for (let i = 1; i <= 20; i++) {
+
+  let loop = true;
+  let undefinedCount = 0;
+  let i = 1;
+  while (loop) {
     let index = ((LPointer - i) + LLength) % LLength;
     let item = L[index];
-    // if not null
     if (item) {
-      // tslint:disable-next-line:no-unused-expression
-      item.timeUp ? toBeRemovedL.push(item) : false;
-      result.push(item);
-      item.inUse = true;
+      if (!item.timeUp) {
+        result.push(item);
+        item.inUse = true;
+      } else {
+        item.inUse = false;
+      }
+    } else {
+      undefinedCount++;
+    }
+    i++;
+    // Conditions to break the loop
+    if (undefinedCount > 3 || result.length === 20) {
+      loop = false;
     }
   }
-
   _listWorker.postMessage(['latest', result]);
 }
 
@@ -83,21 +93,46 @@ function updateLatest20() {
 
 function updateOldest10() {
   let result: Array<ListItem> = [];
-  // if L has been filled one, oldest items are from the the right of LPointer
-  if (lIsFull) {
-    for (let i = 0; i < 10; i++) {
+
+  let loop = true;
+  let undefinedCount = 0;
+  let i = 0;
+  console.log('Looking for the 10 oldest items');
+  while (loop) {
+    if (lIsFull) {
+      // if L has been filled one, oldest items are from the the
+      // right of LPointer
       let index = ((LPointer + i) + LLength) % LLength;
       let item = L[index];
-      result.push(item);
+      if (item) {
+        if (!item.timeUp) {
+          result.push(item);
+        }
+      } else {
+        undefinedCount++;
+      }
+      // L is not filled yet
+    } else {
+      let index = i;
+      let item = L[index];
+      if (item) {
+        if (!item.timeUp) {
+          result.push(item);
+        }
+        i++;
+      } else {
+        undefinedCount++;
+      }
     }
-  } else {
-    // the first 10 items
-    for (let i = 0; i < 10; i++) {
-      let item = L[i];
-      result.push(item);
+    if (result.length === 10 || undefinedCount > 3) {
+      console.log(result.length);
+      console.log(undefinedCount);
+      loop = false;
     }
-    _listWorker.postMessage(['oldest', result]);
   }
+
+  _listWorker.postMessage(['oldest', result]);
+  undefinedCount = 0;
 }
 /**
  * Triggered after received a new pair
@@ -126,6 +161,7 @@ function addNumberPairToL(pair: NumberPair) {
   let loop = true;
   while (loop) {
     let toBeRemovedItem = L[LPointer];
+
     if (toBeRemovedItem === undefined && LPointer < LLength - 1) {
       let newItem: ListItem = {inUse: false, pair: pair, timeUp: false};
       //   Replace old item with new item
@@ -135,18 +171,30 @@ function addNumberPairToL(pair: NumberPair) {
       LPointer++;
       //   Break the loop
       loop = false;
+    } else if (toBeRemovedItem !== undefined && LLength < LLength - 1) {
+      if (toBeRemovedItem.inUse) {
+        toBeRemovedL.indexOf(toBeRemovedItem) > -1 ?
+            toBeRemovedL.push(toBeRemovedItem) :
+            console.log('item not found');
+        LPointer++;
+      } else {
+        let newItem: ListItem = {inUse: false, pair: pair, timeUp: false};
+        //   Replace old item with new item
+        insertNewItem(LPointer, newItem);
+        // break loop
+        loop = false;
+      }
     }
 
-    // Case where pointer is at the end of L
     if (LPointer === LLength - 1) {
+      // Case where pointer is at the end of L
       // L has been filled one
       lIsFull = true;
 
       if (toBeRemovedItem.inUse) {
         toBeRemovedL.indexOf(toBeRemovedItem) > -1 ?
             toBeRemovedL.push(toBeRemovedItem) :
-            // tslint:disable-next-line:no-unused-expression
-            false;
+            console.log('item not found');
       } else {
         let newItem: ListItem = {inUse: false, pair: pair, timeUp: false};
         //   Replace old item with new item
@@ -199,4 +247,5 @@ function removeItemFromL(index: number) {
   //  removing item on the right side of the LPointer does not affect the
   //  current value of LPOinter
   index > LPointer ? LPointer = LPointer : LPointer--;
+  console.log('lPointer', LPointer);
 }

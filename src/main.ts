@@ -25,10 +25,13 @@ if (window.hasOwnProperty('Worker')) {
     }
   };
 
-
   oldItemsManager.onmessage = (e: MessageEvent) => {
     switch (e.data[0]) {
       case 'median':
+        break;
+
+      case 'sum':
+        displaySum(e.data[1]);
         break;
     }
   };
@@ -46,7 +49,6 @@ if (window.hasOwnProperty('Worker')) {
 }
 
 function displayLatest(items: Array<ListItem>) {
-  console.log(items);
   let table = document.getElementById('latest') as HTMLTableElement;
   table.innerHTML = '';
   table.insertRow(0).insertCell(0).innerHTML = '<b>Latest</b>';
@@ -59,7 +61,11 @@ function displayLatest(items: Array<ListItem>) {
 }
 
 
-function displayOldestItems(items: ListItem[]) {
-  let tbody = document.getElementById('oldestBody');
+
+function displaySum(sum: number) {
+  let tbody = document.getElementById('table2') as HTMLTableElement;
+  let row = tbody.insertRow(0);
+  let cell = row.insertCell();
+  cell.innerHTML = sum.toString();
   console.log(tbody);
 }
