@@ -21,9 +21,3 @@ npm run build
 ```
 npm run serve
 ```
-
-
-Or simply execute 
-```
-npm run start
-```
