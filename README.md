@@ -21,3 +21,8 @@ npm run build
 ```
 npm run serve
 ```
+
+Step 2 and 3 can be combined by simply executing
+```
+npm run demo
+```

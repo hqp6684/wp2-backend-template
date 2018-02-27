@@ -10,7 +10,8 @@
     "build": "npm run clean && tsc && npm run html",
     "wp-build": "webpack --config webpack.config.js",
     "clean": "rimraf -- dist",
-    "serve": "lite-server"
+    "serve": "lite-server",
+    "demo" : "npm run build && npm run serve"
   },
   "keywords": [],
   "author": "",
