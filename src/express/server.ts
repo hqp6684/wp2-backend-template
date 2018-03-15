@@ -1,13 +1,51 @@
 import * as express from 'express';
+import { MongoClient, Db } from 'mongodb';
 
 export class App {
-  public express: express.Application;
+
+  private express: express.Application;
+
+  private _mongoClient: MongoClient;
+  private _db: Db;
 
   // Run configuration methods on the Express instance.
   constructor() {
     this.express = express();
     // this.middleware();
     this.routes();
+
+    // database
+    this._connectMongoDB();
+
+  }
+
+  public listen(port?: number) {
+    this.express.listen(port ? port : 8000);
+  }
+  public exit() {
+    console.log('Closing DB Connection');
+    this._mongoClient.close();
+  }
+
+  private _connectMongoDB() {
+    // TODO: create config file or use enviroment vars
+    const url = 'mongodb://localhost';
+    const port = '27017';
+    const dbName = 'test';
+    const mongodbConnectionString = url + ':' + port;
+    MongoClient.connect(mongodbConnectionString, (error, mongoClient) => {
+      if (error) {
+        throw new Error('DB Connection error');
+      }
+      console.log('Connected successfully to MongoDB Server');
+      this._mongoClient = mongoClient;
+
+      this._db = mongoClient.db(dbName);
+      this._db.collection('test');
+
+
+    });
+
   }
 
   // Configure API endpoints.
@@ -29,6 +67,8 @@ export class App {
         });
       }
     );
-    this.express.use('/', router);
+    this.express.use('/api', router);
   }
+  // serve static
+  // this.express.use(express.static(__dirname + '/dist'))
 }
