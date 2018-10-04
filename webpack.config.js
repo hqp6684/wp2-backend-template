@@ -3,8 +3,7 @@ var fs = require("fs");
 
 // find and return the list of native node modules
 var nodeModules = {};
-fs
-  .readdirSync("node_modules")
+fs.readdirSync("node_modules")
   .filter(function(x) {
     return [".bin"].indexOf(x) === -1;
   })
@@ -14,6 +13,8 @@ fs
 
 module.exports = {
   target: "node",
+  mode: "development",
+  // mode: "production",
   entry: ["./src/main.ts"],
   output: {
     filename: "[name].bundle.js",
